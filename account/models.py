@@ -16,3 +16,6 @@ class UserProfile(BaseModel):
     phone = models.CharField(max_length=14)
     address = models.CharField(max_length=50)
     profile_picture = models.FileField(upload_to="profile_pictures", null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"Profile of {self.user.username}"

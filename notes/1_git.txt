@@ -1,0 +1,15 @@
+1. Git is a version control system
+2. It helps in team collaboration
+
+
+1. git init
+2. git add .
+3. git commit -m "commit message"
+4. git remote add origin <ssh-link>
+
+5. git pull
+
+# Branching
+1. git checkout -b sunayana
+
+django-admin startproject myproject
