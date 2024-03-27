@@ -21,12 +21,14 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'account',
     'commons',
-    "core"
+    "core",
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -106,3 +108,4 @@ LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
 LOGIN_REDIRECT_URL = '/api/root/'
 LOGOUT_REDIRECT_URL = '/api/root/'
+CORS_ORIGIN_ALLOW_ALL = True
