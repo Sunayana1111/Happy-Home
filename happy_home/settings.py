@@ -1,4 +1,5 @@
 from pathlib import Path
+from .env import *
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -109,3 +110,6 @@ LOGOUT_URL = 'rest_framework:logout'
 LOGIN_REDIRECT_URL = '/api/root/'
 LOGOUT_REDIRECT_URL = '/api/root/'
 CORS_ORIGIN_ALLOW_ALL = True
+
+KHALTI_PUBLIC_KEY = khalti_public_key
+KHALTI_SECRET_KEY = khalti_secret_key
