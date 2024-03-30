@@ -113,3 +113,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 KHALTI_PUBLIC_KEY = khalti_public_key
 KHALTI_SECRET_KEY = khalti_secret_key
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://27fb-2400-1a00-b030-1c0-11df-426c-ccf2-4cce.ngrok-free.app',  # Add your trusted host here
+    'https://subdomain.example.com',  # Add additional trusted hosts if needed
+]

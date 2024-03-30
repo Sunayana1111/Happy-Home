@@ -2,6 +2,7 @@ from rest_framework import serializers
 from account.serializers.user import UserSerializer
 from .models import LabService, CareGiver, CareGiverAppointment, LabServiceAppointment, TransactionCGService,\
 TransactionLabService
+from .constants import KHALTI, CASH
 
 
 class LabServiceSerializer(serializers.ModelSerializer):
@@ -16,26 +17,38 @@ class CareGiverSerializer(serializers.ModelSerializer):
         model = CareGiver
         fields = ["uuid", "speciality", "languages", "ratings", "experience", "bio", "user"]
 
-class CGAppointmentSerializer(serializers.ModelSerializer):
-    caregiver = serializers.SlugRelatedField(slug_field="uuid", queryset=CareGiver.objects.all())
+class BookAppointmentSerializer(serializers.Serializer):
+    appointment_for = serializers.UUIDField()
+    full_name = serializers.CharField(max_length=20)
+    phone = serializers.CharField(max_length=14)
+    address = serializers.CharField(max_length=50)
     start_date = serializers.DateField()
-    end_date = serializers.DateField()
+    end_date = serializers.DateField(required=False)
+    description = serializers.CharField(max_length=100)
+    payment_medium = serializers.ChoiceField(choices=(
+        (KHALTI, KHALTI), (CASH, CASH)
+    ))
 
-    class Meta:
-        model = CareGiverAppointment
-        fields = ["uuid", "caregiver", "service", "start_date", "end_date"]
+    appt_for = None
 
-    def get_fields(self):
-        fields = super().get_fields()
-        request = self.context.get("request")
-        if request and request.method.lower() == "get":
-            fields['user'] = UserSerializer()
-        return fields
 
-    def create(self, validated_data):
-        request = self.context.get("request")
-        validated_data['user'] = request.user
-        return super().create(validated_data)
+    def validate(self, attrs):
+        if isinstance(attrs['appointment_for'], CareGiver):
+            self.appt_for = "Caregiver"
+            if not attrs.get('end_date'):
+                raise serializers.ValidationError("Please mention the end date !!")
+        return attrs
+
+    def validate_appointment_for(self, appointment_for):
+        if CareGiver.objects.filter(uuid=appointment_for).exists():
+            self.appt_for = "Caregiver"
+            return CareGiver.objects.get(uuid=appointment_for)
+        if LabService.objects.filter(uuid=appointment_for).exists():
+            self.appt_for = "Labservice"
+            return LabService.objects.get(uuid=appointment_for)
+        raise serializers.ValidationError("Invalid caregiver or labservice id !!")
+
+        
 
 
 class CGTranxInitiateSer(serializers.Serializer):

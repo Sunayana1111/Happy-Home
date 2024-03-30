@@ -3,12 +3,14 @@ from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework import status
 from commons.utils import generate_random_key
 
-from .serializers import CGAppointmentSerializer, LabServiceSerializer, CareGiverSerializer, CGTranxInitiateSer, \
+from .serializers import BookAppointmentSerializer, LabServiceSerializer, CareGiverSerializer, CGTranxInitiateSer, \
 TranxVerifySer
-from .models import LabService, CareGiver, TransactionCGService, TransactionLabService
-from .constants import KHALTI, INITIATED, UNVERIFIED, VERIFIED
+from .models import LabService, CareGiver, TransactionCGService, \
+TransactionLabService, CareGiverAppointment, LabServiceAppointment
+from .constants import KHALTI, INITIATED, UNVERIFIED, VERIFIED, CASH
 from .khalti import KhaltiPayment
 
 
@@ -32,8 +34,50 @@ class CareGiverDetailView(RetrieveAPIView):
     serializer_class = CareGiverSerializer
 
 
-class CGBoookAppointmentView(CreateAPIView):
-    serializer_class = CGAppointmentSerializer
+class BoookAppointmentView(CreateAPIView):
+    serializer_class = BookAppointmentSerializer
+
+
+    def create(self, request, *args, **kwargs):
+        ser = self.get_serializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        appointment_for = ser.validated_data['appointment_for']
+        full_name = ser.validated_data['full_name']
+        phone = ser.validated_data['phone']
+        address = ser.validated_data['address']
+        start_date = ser.validated_data.get("start_date")
+        end_date = ser.validated_data.get("end_date")
+        description = ser.validated_data.get("description")
+        payment_medium = ser.validated_data.get("payment_medium")
+
+        product_id = generate_random_key(alpha_numeric=True, size=8)
+        if ser.appt_for == "Caregiver":
+            appt = CareGiverAppointment.objects.create(caregiver=appointment_for, service=description, full_name=full_name,
+                                                       phone=phone, address=address, start_date=start_date, 
+                                                       end_date=end_date, user=self.request.user)
+            create_tranx_data = dict(appointment=appt, product_id=product_id, amount=10000, status=INITIATED)
+            tranx = TransactionCGService.objects.create(payment_medium=payment_medium, **create_tranx_data)
+            product_name = "CaregiverAppointment"
+        else:
+            appt = LabServiceAppointment.objects.create(user=request.user, service=appointment_for, full_name=full_name,
+                                                        phone=phone, address=address, on_date=start_date)
+            create_tranx_data = dict(appointment=appt, product_id=product_id, amount=10000, status=INITIATED)
+            tranx = TransactionLabService.objects.create(payment_medium=payment_medium, **create_tranx_data)
+            product_name = "LabserviceAppointment"
+        tranx_response = {    "transaction_uuid": tranx.uuid, 
+                              "payment_medium": payment_medium, 
+                              "product_id": tranx.product_id,
+                              "product_name": product_name,
+                              "product_url": "https://happyhome.com",
+                              "amount": tranx.amount,
+                              "message": "Transaction has been initiated"
+                            }
+
+        return Response({
+            "message": "Appointment booked successfully !!",
+            "appointment_uuid": appt.uuid,
+            "transaction": tranx_response
+        }, status=status.HTTP_201_CREATED)
 
 
 class TranxInitiateView(CreateAPIView):

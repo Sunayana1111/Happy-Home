@@ -23,8 +23,10 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def validate(self, attrs):
-        if attrs["password"] != attrs["password2"]:
-            raise serializers.ValidationError("Passwords didn't match")
+        request = self.context.get("request")
+        if request and request.method.lower() == "post":
+            if attrs["password"] != attrs["password2"]:
+                raise serializers.ValidationError("Passwords didn't match")
         return attrs
     
     def get_fields(self):
@@ -35,6 +37,13 @@ class UserSerializer(serializers.ModelSerializer):
             fields["age"] = serializers.IntegerField()
             fields["phone"] = serializers.CharField(max_length=20)
             fields["address"] = serializers.CharField(max_length=20)
+        if request and request.method.lower() in ["put", "patch"]:
+            fields.pop("password")
+            fields.pop("password2")
+            fields["gender"] = serializers.CharField(max_length=20, required=False)
+            fields["age"] = serializers.IntegerField(required=False)
+            fields["phone"] = serializers.CharField(max_length=20, required=False)
+            fields["address"] = serializers.CharField(max_length=20, required=False)
         return fields
 
     def create(self, validated_data):
@@ -47,6 +56,16 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password2)
         user.save()
         UserProfile.objects.create(user=user, gender=gender, phone=phone, address=address, age=age)
+        return user
+    
+    def update(self, instance, validated_data):
+        fields = ["gender", "phone", "address", "age"]
+        defaults = {field:validated_data.pop(field) for field in fields if validated_data.get(field)}
+        user = super().update(instance, validated_data)
+        try:
+            UserProfile.objects.update_or_create(user=user, defaults=defaults)
+        except:
+            pass
         return user
     
     def get_profile(self, obj):
