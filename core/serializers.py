@@ -12,10 +12,17 @@ class LabServiceSerializer(serializers.ModelSerializer):
 
 
 class CareGiverSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
     class Meta:
         model = CareGiver
         fields = ["uuid", "speciality", "languages", "ratings", "experience", "bio", "user"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get("request")
+        if request and request.method == "GET":
+            fields['user'] = UserSerializer(context={"request": request})
+
+        return fields
 
 class BookAppointmentSerializer(serializers.Serializer):
     appointment_for = serializers.UUIDField()

@@ -69,8 +69,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     def get_profile(self, obj):
+        request = self.context.get("context")
         try:
             profile = obj.userprofile
         except:
             return {}
-        return UserProfileSerializer(profile).data
+        return UserProfileSerializer(profile, context={"request": request}).data
