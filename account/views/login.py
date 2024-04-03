@@ -12,4 +12,5 @@ class LoginView(ObtainAuthToken):
             'message': "Login Successful !!",
             'token': token.key,
             'username': user.username
-            }) 
+            })
+ 
