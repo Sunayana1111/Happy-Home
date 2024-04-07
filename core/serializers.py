@@ -92,3 +92,26 @@ class TranxVerifySer(serializers.Serializer):
 
     def update(self, instance, validated_data):
         pass
+
+
+class LabAppointmentSerializer(serializers.ModelSerializer):
+    appointment_for = serializers.SerializerMethodField()
+
+    class Meta:
+        model = LabServiceAppointment
+        fields = ["uuid", "created_at", "appointment_for", "on_date", "is_paid", "service"]
+
+    def get_appointment_for(self, obj):
+        return "lab_service"
+
+class CGAppointmentSerializer(serializers.ModelSerializer):
+    appointment_for = serializers.SerializerMethodField()
+    caregiver = CareGiverSerializer()
+
+    class Meta:
+        model = CareGiverAppointment
+        fields = ["uuid", "created_at", "appointment_for", "service", "start_date", "end_date", "is_paid",
+                  "caregiver"]
+
+    def get_appointment_for(self, obj):
+        return "caregiver_service"

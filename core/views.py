@@ -7,7 +7,7 @@ from rest_framework import status
 from commons.utils import generate_random_key
 
 from .serializers import BookAppointmentSerializer, LabServiceSerializer, CareGiverSerializer, CGTranxInitiateSer, \
-TranxVerifySer
+TranxVerifySer, LabAppointmentSerializer, CGAppointmentSerializer
 from .models import LabService, CareGiver, TransactionCGService, \
 TransactionLabService, CareGiverAppointment, LabServiceAppointment
 from .constants import KHALTI, INITIATED, UNVERIFIED, VERIFIED, CASH
@@ -133,3 +133,18 @@ class TranxVerifyView(CreateAPIView):
         return Response({
             "message": message
         }, status=response.status_code)
+
+
+class UserAppointments(ListAPIView):
+    def list(self, request, *args, **kwargs):
+        lab_appointments = LabServiceAppointment.objects.filter(user=self.request.user)
+        lab_Ser = LabAppointmentSerializer(lab_appointments, many=True, context={"request": self.request})
+        cg_appointments = CareGiverAppointment.objects.filter(user=self.request.user)
+        cg_ser = CGAppointmentSerializer(cg_appointments, many=True, context={"request": self.request})
+        response = list(lab_Ser.data)
+        response.extend(list(cg_ser.data))
+
+        page = self.paginate_queryset(response)
+        if page is not None:
+            return self.get_paginated_response(page)
+        return Response(response)

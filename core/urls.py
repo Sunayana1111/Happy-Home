@@ -1,6 +1,6 @@
 from django.urls import path, include
 from core.views import LabServicesView, BoookAppointmentView, CareGiverView, CareGiverDetailView, \
-TranxInitiateView, TranxVerifyView
+TranxInitiateView, TranxVerifyView, UserAppointments
 
 caregiver_urls = [
     path("<str:uuid>/", CareGiverDetailView.as_view()),
@@ -12,5 +12,6 @@ urlpatterns = [
     path("appointment/transaction/initiate/", TranxInitiateView.as_view()),
     path("book-appointment/", BoookAppointmentView.as_view()),
     path("appointment/transaction/verify/", TranxVerifyView.as_view()),
-    path("care-giver/", include(caregiver_urls))
+    path("care-giver/", include(caregiver_urls)),
+    path("uer-appointments/", UserAppointments.as_view())
 ]
