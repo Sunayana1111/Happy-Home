@@ -119,6 +119,16 @@ KHALTI_PUBLIC_KEY = khalti_public_key
 KHALTI_SECRET_KEY = khalti_secret_key
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://1c97-2400-1a00-b030-1c0-dc28-416-52d-5c68.ngrok-free.app',  # Add your trusted host here
+    ' https://bc47-182-93-83-71.ngrok-free.app',  # Add your trusted host here
     'https://subdomain.example.com',  # Add additional trusted hosts if needed
 ]
+
+
+DEFAULT_FROM_EMAIL = 'Happy Home <noreply@munanyc.com>'
+TO_EMAIL = ['sunayanashrestha3@gmail.com', ]
+
+EMAIL_HOST = 'email-smtp.ap-southeast-1.amazonaws.com'
+EMAIL_HOST_USER = 'AKIAT5H336S4II2D5KAF'
+EMAIL_HOST_PASSWORD = 'BNircvi19pDA+G4uGijCICYJdSRotX9ySOlyUVWdsXmu'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

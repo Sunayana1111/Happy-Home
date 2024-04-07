@@ -1,4 +1,6 @@
 import requests
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -73,6 +75,11 @@ class BoookAppointmentView(CreateAPIView):
                               "message": "Transaction has been initiated"
                             }
 
+        if payment_medium == CASH:
+            send_mail(subject="Appointment Confirmation", message="You have successfully booked your "
+                                                                  "Appointment", from_email=settings.DEFAULT_FROM_EMAIL,
+                      recipient_list=settings.TO_EMAIL)
+
         return Response({
             "message": "Appointment booked successfully !!",
             "appointment_uuid": appt.uuid,
@@ -130,6 +137,10 @@ class TranxVerifyView(CreateAPIView):
             message = "Invalid payment request !!"
         transaction.server_response = response.json()
         transaction.save()
+
+        send_mail(subject="Appointment Confirmation", message="You have paid Rs. 100 and successfully booked your "
+                                                              "Appointment", from_email=settings.DEFAULT_FROM_EMAIL,
+                  recipient_list=settings.TO_EMAIL)
         return Response({
             "message": message
         }, status=response.status_code)
