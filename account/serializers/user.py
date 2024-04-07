@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 from account.models import UserProfile
 
+
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
@@ -69,7 +70,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
     
     def get_profile(self, obj):
-        request = self.context.get("context")
+        request = self.context.get("request")
         try:
             profile = obj.userprofile
         except:
