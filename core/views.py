@@ -2,16 +2,15 @@ import requests
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
-from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import status
-from commons.utils import generate_random_key
+from commons.utils import generate_random_key, send_template_email
 
 from .serializers import BookAppointmentSerializer, LabServiceSerializer, CareGiverSerializer, CGTranxInitiateSer, \
-TranxVerifySer, LabAppointmentSerializer, CGAppointmentSerializer
+    TranxVerifySer, LabAppointmentSerializer, CGAppointmentSerializer
 from .models import LabService, CareGiver, TransactionCGService, \
-TransactionLabService, CareGiverAppointment, LabServiceAppointment
+    TransactionLabService, CareGiverAppointment, LabServiceAppointment
 from .constants import KHALTI, INITIATED, UNVERIFIED, VERIFIED, CASH
 from .khalti import KhaltiPayment
 
@@ -39,7 +38,6 @@ class CareGiverDetailView(RetrieveAPIView):
 class BoookAppointmentView(CreateAPIView):
     serializer_class = BookAppointmentSerializer
 
-
     def create(self, request, *args, **kwargs):
         ser = self.get_serializer(data=request.data)
         ser.is_valid(raise_exception=True)
@@ -54,8 +52,9 @@ class BoookAppointmentView(CreateAPIView):
 
         product_id = generate_random_key(alpha_numeric=True, size=8)
         if ser.appt_for == "Caregiver":
-            appt = CareGiverAppointment.objects.create(caregiver=appointment_for, service=description, full_name=full_name,
-                                                       phone=phone, address=address, start_date=start_date, 
+            appt = CareGiverAppointment.objects.create(caregiver=appointment_for, service=description,
+                                                       full_name=full_name,
+                                                       phone=phone, address=address, start_date=start_date,
                                                        end_date=end_date, user=self.request.user)
             create_tranx_data = dict(appointment=appt, product_id=product_id, amount=10000, status=INITIATED)
             tranx = TransactionCGService.objects.create(payment_medium=payment_medium, **create_tranx_data)
@@ -66,20 +65,21 @@ class BoookAppointmentView(CreateAPIView):
             create_tranx_data = dict(appointment=appt, product_id=product_id, amount=10000, status=INITIATED)
             tranx = TransactionLabService.objects.create(payment_medium=payment_medium, **create_tranx_data)
             product_name = "LabserviceAppointment"
-        tranx_response = {    "transaction_uuid": tranx.uuid, 
-                              "payment_medium": payment_medium, 
-                              "product_id": tranx.product_id,
-                              "product_name": product_name,
-                              "product_url": "https://happyhome.com",
-                              "amount": tranx.amount,
-                              "message": "Transaction has been initiated"
-                            }
+        tranx_response = {"transaction_uuid": tranx.uuid,
+                          "payment_medium": payment_medium,
+                          "product_id": tranx.product_id,
+                          "product_name": product_name,
+                          "product_url": "https://happyhome.com",
+                          "amount": tranx.amount,
+                          "message": "Transaction has been initiated"
+                          }
 
         if payment_medium == CASH:
             send_mail(subject="Appointment Confirmation", message="You have successfully booked your "
                                                                   "Appointment", from_email=settings.DEFAULT_FROM_EMAIL,
                       recipient_list=settings.TO_EMAIL)
-
+        else:
+            send_template_email(request.user, subject="Appointment")
         return Response({
             "message": "Appointment booked successfully !!",
             "appointment_uuid": appt.uuid,
@@ -114,7 +114,6 @@ class TranxInitiateView(CreateAPIView):
         })
 
 
-
 class TranxVerifyView(CreateAPIView):
     serializer_class = TranxVerifySer
     khalti = KhaltiPayment()
@@ -126,7 +125,8 @@ class TranxVerifyView(CreateAPIView):
         token = serializer.validated_data['khalti_token']
         transaction = serializer.validated_data['transaction_uuid']
         payload = dict(token=token, amount=transaction.amount)
-        response = requests.request("POST", self.khalti.transaction_verify_url, headers=self.khalti_headers, data=payload)
+        response = requests.request("POST", self.khalti.transaction_verify_url, headers=self.khalti_headers,
+                                    data=payload)
         transaction.payment_medium = KHALTI
         if response.status_code == 200:
             transaction.status = VERIFIED
