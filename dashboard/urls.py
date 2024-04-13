@@ -4,7 +4,8 @@ from . import views
 app_name = 'dashboard'
 
 urlpatterns=[       
-        path('', views.DashboardView.as_view(), name='index'),
+        path('', views.CareGiverAppointmentView.as_view(), name='index'),
+        path('lab-appointments/', views.LabAppointmentView.as_view(), name='lab_appointments'),
 
         # git-pull
         path('git-pull', views.GitPullView.as_view(), name='git-pull'),

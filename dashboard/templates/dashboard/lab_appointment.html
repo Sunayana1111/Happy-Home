@@ -1,8 +1,8 @@
 {% extends 'dashboard/base/index.html' %}
 
-{% block title %} Appointments {% endblock %}
+{% block title %} Lab Appointments {% endblock %}
 
-{% block subtitle %} Appointments {% endblock %}
+{% block subtitle %} Lab Appointments {% endblock %}
 
 {% load static %}
 
@@ -24,8 +24,7 @@
                             <th>S.N</th>
                             <th>Full Name</th>
                             <th>Phone</th>
-                            <th>Start</th>
-                            <th>End</th>
+                            <th>On Date</th>
                             <th>Service</th>
                             <th>Paid</th>
                         </tr>
@@ -37,8 +36,7 @@
                             <td>{{ forloop.counter }}</td>
                             <td>{{ appt.full_name }}</td>
                             <td>{{ appt.phone }}</td>
-                            <td>{{ appt.start_date|date }}</td>
-                            <td>{{ appt.end_date|date }}</td>
+                            <td>{{ appt.on_date|date }}</td>
                             <td>
                                 {{ appt.service }}
                             </td>

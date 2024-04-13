@@ -13,9 +13,9 @@
         <div class="row mb-4 mt-4 mr-2">
             <div class="col-md-12">
                 <div style="text-align: right">
-                    <a href="{% url 'dashboard:users-create' %}" class="btn btn-outline-primary">
-                        <i class="fa fa-plus"></i>&nbsp; Add User
-                    </a>
+{#                    <a href="{% url 'dashboard:users-create' %}" class="btn btn-outline-primary">#}
+{#                        <i class="fa fa-plus"></i>&nbsp; Add User#}
+{#                    </a>#}
                 </div>
             </div>
         </div>
@@ -36,8 +36,10 @@
                         {% for users in object_list %}
                         <tr>
                             <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-                            <td>{{ users.username }}</td>
-                            <td><span class="badge badge-secondary">{{ users.groups.all.0 }}</span></td>
+                            <td>{{ users.first_name }}&nbsp;{{ users.last_name }}</td>
+                            <td><span class="badge badge-secondary">
+                                {% if users.userprofile.is_admin %}Admin{% else %}Caregiver{% endif %}
+                            </span></td>
                             <td>{{ users.email }}</td>
                             <td>{% if users.is_active == True %} <span class="badge badge-success"> Active </span> {% else %} <span class="badge badge-danger"> In Active </span> {% endif %}</td>
                             <td>
@@ -50,7 +52,7 @@
                                     <a href="{% url 'dashboard:users-update' users.id %}" class="btn-sm btn btn-info btn-success-space" data-toggle="tooltip" data-original-title='Modify'>
                                         <i class="fa fa-pencil-alt"></i>
                                     </a>
-                                    {% if request.user.is_superuser %}
+                                    {% if request.user.userprofile.is_admin %}
                                     <a href="{% url 'dashboard:users-status' users.id %}" data-toggle="tooltip"  {% if users.is_active == True %} class="btn-sm btn btn-danger user-deactivate" data-original-title='Deactivate'  {% else %} class="btn-sm btn btn-success user-activate" data-original-title='Activate' {% endif %}>
                                         {% if users.is_active == True %}
                                         <i class="fas fa-ban"></i>

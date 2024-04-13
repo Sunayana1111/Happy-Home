@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView
+from core.models import CareGiverAppointment, LabServiceAppointment
 from account.models import UserProfile
 
 from .forms import (
@@ -35,9 +36,28 @@ class HomeView(View):
         return redirect('dashboard:login')
 
 
-class DashboardView(CustomLoginRequiredMixin, BaseMixin, TemplateView):
+class CareGiverAppointmentView(CustomLoginRequiredMixin, BaseMixin, TemplateView):
     template_name = 'dashboard/index.html'
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        profile = self.request.user.userprofile
+        if profile.is_caregiver:
+            context["appointments"] = CareGiverAppointment.objects.filter(caregiver__user=self.request.user)
+        else:
+            context["appointments"] = CareGiverAppointment.objects.all()
+        return context
+
+
+class LabAppointmentView(CustomLoginRequiredMixin, BaseMixin, TemplateView):
+    template_name = 'dashboard/lab_appointment.html'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data()
+        profile = self.request.user.userprofile
+        if profile.is_admin:
+            context["appointments"] = LabServiceAppointment.objects.all()
+        return context
 
 # Git Pull View
 class GitPullView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, View):

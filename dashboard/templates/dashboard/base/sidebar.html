@@ -7,7 +7,8 @@
             <div class="d-flex align-items-center sidebar-p-a border-bottom sidebar-account flex-shrink-0">
                 <a href="{% url 'dashboard:index' %}" class="flex d-flex align-items-center text-underline-0 text-body">
                     <span class="flex d-flex flex-column">
-                        <img src="{% static 'dashboard/admin/assets/images/home.png' %}" width="80" height="50" alt="avatar">
+                        <img src="{% static 'dashboard/admin/assets/images/home.png' %}" width="80" height="50"
+                             alt="avatar">
                     </span>
                     <span class="flex d-flex flex-column">
                         <strong style="font-size: 1.125rem;"><br>Happy Home</strong>
@@ -20,35 +21,57 @@
                             <div><strong>{{ user }}</strong></div>
                             <div>@ {{ user }}</div>
                         </div>
-                       
+
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'dashboard:logout' %}">Logout</a>
                     </div>
                 </div>
             </div>
 
-            
+
             <div class="">
-                <div >
+                <div>
                     <ul class="sidebar-menu flex">
 
                         <li class="sidebar-menu-item">
                             <a class="sidebar-menu-button" href="{% url 'dashboard:index' %}">
                                 <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">dashboard</i>
-                                <span class="sidebar-menu-text"> Dashboard </span>
+                                {% if request.user.userprofile.is_caregiver %}
+                                    <span class="sidebar-menu-text"> Appointment </span>
+                                {% else %}
+                                    <span class="sidebar-menu-text"> Caregiver Appointment </span>
+                                {% endif %}
                             </a>
                         </li>
                         {% if request.user.userprofile.is_admin %}
-                        <li class="sidebar-menu-item">
-                            <a class="sidebar-menu-button" href="{% url 'dashboard:users-list' %}">
-                                <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">account_box</i>
-                                <span class="sidebar-menu-text"> Users </span>
-                            </a>
-                        </li>
-                        {% endif %}
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button" href="{% url 'dashboard:lab_appointments' %}">
+                                    <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">dashboard</i>
 
-                       <li class="sidebar-menu-item">
-                            <a class="sidebar-menu-button" href="{% url 'dashboard:users-list' %}">
+                                    <span class="sidebar-menu-text"> Lab Appointment </span>
+
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if request.user.userprofile.is_admin %}
+                            <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button" href="{% url 'dashboard:users-list' %}">
+                                    <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">account_box</i>
+                                    <span class="sidebar-menu-text"> Users </span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% if request.user.userprofile.is_caregiver %}
+                        <li class="sidebar-menu-item">
+                                <a class="sidebar-menu-button" href="#">
+                                    <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">account_box</i>
+                                    <span class="sidebar-menu-text"> Profile </span>
+                                </a>
+                            </li>
+                    {% endif %}
+
+                        <li class="sidebar-menu-item">
+                            <a class="sidebar-menu-button" href="#">
                                 <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">chat</i>
                                 <span class="sidebar-menu-text"> Chat </span>
                             </a>
@@ -58,7 +81,7 @@
             </div>
 
             <div class="mt-auto sidebar-p-a sidebar-b-t d-flex flex-column flex-shrink-0">
-              
+
                 <a class="sidebar-link" href="{% url 'dashboard:logout' %}">
                     Logout
                     <i class="sidebar-menu-icon ml-2 material-icons icon-16pt">exit_to_app</i>
