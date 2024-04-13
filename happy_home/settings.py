@@ -129,12 +129,21 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-DEFAULT_FROM_EMAIL = 'Happy Home <noreply@munanyc.com>'
-TO_EMAIL = ['sunayanashrestha3@gmail.com', ]
+# DEFAULT_FROM_EMAIL = 'Happy Home <noreply@munanyc.com>'
+TO_EMAIL = 'sunayanashrestha3@gmail.com'
 
-EMAIL_HOST = 'email-smtp.ap-southeast-1.amazonaws.com'
-EMAIL_HOST_USER = 'AKIAT5H336S4II2D5KAF'
-EMAIL_HOST_PASSWORD = 'BNircvi19pDA+G4uGijCICYJdSRotX9ySOlyUVWdsXmu'
+# EMAIL_HOST = 'email-smtp.ap-southeast-1.amazonaws.com'
+# EMAIL_HOST_USER = 'AKIAT5H336S4II2D5KAF'
+# EMAIL_HOST_PASSWORD = 'BNircvi19pDA+G4uGijCICYJdSRotX9ySOlyUVWdsXmu'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+
+
+# AWS Email
+DEFAULT_FROM_EMAIL = 'Happy Home <noreply@levelup.com.np>'
+EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
+EMAIL_HOST_USER = 'AKIA3J3FUXCJIBP6OQUR'
+EMAIL_HOST_PASSWORD = 'BIG/JGOJ9+nRWCLqN8/x2e8V/KNBYAgNKaimCxhToL1C'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 

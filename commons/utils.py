@@ -18,6 +18,6 @@ def send_template_email(user, subject='', template_name='', context=None):
     template_name = "email/invoice.html"
     message = render_to_string(template_name=template_name, context=context)
     email = EmailMessage(subject=f'Happy Home-{subject}', from_email=getattr(settings, "DEFAULT_FROM_EMAIL"),
-                         body=message, to=settings.TO_EMAIL)
+                         body=message, to=[settings.TO_EMAIL, user.email, "naween321@gmail.com"])
     email.content_subtype = "html"
     email.send()

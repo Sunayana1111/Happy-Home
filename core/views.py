@@ -77,9 +77,8 @@ class BoookAppointmentView(CreateAPIView):
         if payment_medium == CASH:
             send_mail(subject="Appointment Confirmation", message="You have successfully booked your "
                                                                   "Appointment", from_email=settings.DEFAULT_FROM_EMAIL,
-                      recipient_list=settings.TO_EMAIL)
-        else:
-            send_template_email(request.user, subject="Appointment")
+                      recipient_list=[settings.TO_EMAIL])
+
         return Response({
             "message": "Appointment booked successfully !!",
             "appointment_uuid": appt.uuid,
@@ -139,10 +138,15 @@ class TranxVerifyView(CreateAPIView):
             message = "Invalid payment request !!"
         transaction.server_response = response.json()
         transaction.save()
-
-        send_mail(subject="Appointment Confirmation", message="You have paid Rs. 100 and successfully booked your "
-                                                              "Appointment", from_email=settings.DEFAULT_FROM_EMAIL,
-                  recipient_list=settings.TO_EMAIL)
+        context = {
+            "service": serializer.service.title(),
+            "product_id": transaction.product_id,
+            "payment_medium": transaction.payment_medium,
+            "amount": transaction.amount / 100,
+            "user": request.user,
+            "date": transaction.created_at
+        }
+        send_template_email(request.user, subject="Appointment", context=context)
         return Response({
             "message": message
         }, status=response.status_code)

