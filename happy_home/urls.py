@@ -19,5 +19,13 @@ if settings.DEBUG:
         path('api-auth/', include('rest_framework.urls',
                               namespace='rest_framework')),
     ]
+    from django.shortcuts import render
+
+    def chat_test(r):
+        return render(r, template_name='socket/test.html')
+
+    urlpatterns += [
+        path('chat/test/', chat_test)
+    ]
 
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

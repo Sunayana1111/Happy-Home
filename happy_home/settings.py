@@ -11,6 +11,7 @@ ALLOWED_HOSTS = ["*"]
 
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -23,7 +24,9 @@ INSTALLED_APPS = [
     'account',
     'commons',
     "core",
-    "corsheaders"
+    "corsheaders",
+    "chat",
+    "channels"
 ]
 
 MIDDLEWARE = [
@@ -55,7 +58,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'happy_home.wsgi.application'
+# WSGI_APPLICATION = 'happy_home.wsgi.application'
+ASGI_APPLICATION = 'happy_home.asgi.application'
 
 DATABASES = {
     'default': {
@@ -105,7 +109,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated"
     ],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    # "PAGE_SIZE": 10
+    "PAGE_SIZE": 10
 }
 
 
@@ -119,7 +123,7 @@ KHALTI_PUBLIC_KEY = khalti_public_key
 KHALTI_SECRET_KEY = khalti_secret_key
 
 CSRF_TRUSTED_ORIGINS = [
-    ' https://bc47-182-93-83-71.ngrok-free.app',  # Add your trusted host here
+    'https://5df2-2400-1a00-b030-1c0-44d8-9f4a-261-3d26.ngrok-free.app',  # Add your trusted host here
     'https://subdomain.example.com',  # Add additional trusted hosts if needed
 ]
 
@@ -132,3 +136,13 @@ EMAIL_HOST_USER = 'AKIAT5H336S4II2D5KAF'
 EMAIL_HOST_PASSWORD = 'BNircvi19pDA+G4uGijCICYJdSRotX9ySOlyUVWdsXmu'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
