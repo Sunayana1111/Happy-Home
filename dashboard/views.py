@@ -5,12 +5,12 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView
-from core.models import CareGiverAppointment, LabServiceAppointment
+from core.models import CareGiverAppointment, LabServiceAppointment, CareGiver
 from account.models import UserProfile
 
 from .forms import (
@@ -19,6 +19,7 @@ from .forms import (
     SignUpForm,
     UserForm
 )
+from core.forms import CaregiverForm
 from .mixins import (
     BaseMixin,
 
@@ -245,3 +246,40 @@ class UserPasswordResetView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, S
 class GroupRequiredTestView(CustomLoginRequiredMixin, GroupRequiredMixin, TemplateView):
     template_name = "dashboard/designations/list.html"
     group_required = ['editor']
+
+
+class CareGiverProfileView(CustomLoginRequiredMixin, CreateView):
+    form_class = CaregiverForm
+    template_name = "dashboard/caregiver_profile.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(CareGiverProfileView, self).get_context_data()
+        caregiver = CareGiver.objects.filter(user=self.request.user)
+        if caregiver.exists():
+            context["caregiver"] = caregiver[0]
+        return context
+
+    def form_valid(self, form):
+        speciality = form.cleaned_data.get("speciality")
+        languages = form.cleaned_data.get("languages")
+        experience = form.cleaned_data.get("experience")
+        bio = form.cleaned_data.get('bio')
+        cg, _ = CareGiver.objects.update_or_create(user=self.request.user,
+                                                   defaults=dict(speciality=speciality,
+                                                                 languages=languages,
+                                                                 experience=experience,
+                                                                 bio=bio))
+        pp = form.cleaned_data.get("profile_picture")
+        if pp:
+            try:
+                profile = self.request.user.userprofile
+                profile.profile_picture = pp
+                profile.save()
+            except:
+                pass
+        return redirect("dashboard:caregiver_profile", self.request.user.id)

@@ -63,7 +63,7 @@
                         {% endif %}
                     {% if request.user.userprofile.is_caregiver %}
                         <li class="sidebar-menu-item">
-                                <a class="sidebar-menu-button" href="#">
+                                <a class="sidebar-menu-button" href="{% url 'dashboard:caregiver_profile' request.user.id %}">
                                     <i class="sidebar-menu-icon sidebar-menu-icon--left material-icons">account_box</i>
                                     <span class="sidebar-menu-text"> Profile </span>
                                 </a>

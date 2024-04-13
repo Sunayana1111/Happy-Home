@@ -31,4 +31,7 @@ urlpatterns=[
         path('users/<int:pk>/status', views.UserStatusView.as_view(), name='users-status'),
         path('users/<int:pk>/password-reset', views.UserPasswordResetView.as_view(), name='users-password-reset'),
 
+        #caregiver
+        path("user/<str:uuid>/caregiver/", views.CareGiverProfileView.as_view(), name="caregiver_profile")
+
 ]

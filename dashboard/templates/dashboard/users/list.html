@@ -49,9 +49,6 @@
                                         <button type="button" class="btn-sm btn btn-primary">Reset Password</button>
                                     </a>
                                     &nbsp;
-                                    <a href="{% url 'dashboard:users-update' users.id %}" class="btn-sm btn btn-info btn-success-space" data-toggle="tooltip" data-original-title='Modify'>
-                                        <i class="fa fa-pencil-alt"></i>
-                                    </a>
                                     {% if request.user.userprofile.is_admin %}
                                     <a href="{% url 'dashboard:users-status' users.id %}" data-toggle="tooltip"  {% if users.is_active == True %} class="btn-sm btn btn-danger user-deactivate" data-original-title='Deactivate'  {% else %} class="btn-sm btn btn-success user-activate" data-original-title='Activate' {% endif %}>
                                         {% if users.is_active == True %}
