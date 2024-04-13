@@ -7,51 +7,70 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid page__container">
-    <div class="card document-card">
-        <div class="row mb-4 mt-4 mr-2">
-            <div class="col-md-12">
-                <div style="text-align: right">
+    <div class="container-fluid page__container">
+        <div class="card document-card">
+            <div class="row mb-4 mt-4 mr-2">
+                <div class="col-md-12">
+                    <div style="text-align: right">
+                    </div>
+                </div>
+            </div>
+            <div class="row ml-2 mr-2 mb-2 mt-2">
+                <div class="col-sm-12 document-table-space">
+                    {% if appointments %}
+                        <table class="table  w-full no-footer" role="grid">
+                            <thead class="table-space-top-bottom">
+                            <tr role="row">
+                                <th>S.N</th>
+                                <th>Date</th>
+                                <th>Full Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>On Date</th>
+                                <th>Service</th>
+                                <th>Payment Status</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for appt in appointments %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ appt.created_at | date }}</td>
+                                    <td>{{ appt.full_name }}</td>
+                                    <td>{{ appt.address }}</td>
+                                    <td>{{ appt.phone }}</td>
+                                    <td>{{ appt.on_date|date }}</td>
+                                    <td>
+                                        {{ appt.service }}
+                                    </td>
+                                    {% if appt.is_paid %}
+                                        <td><span style="color: green">Paid</span>
+                                            <a href="{% url 'dashboard:payment_status' appt.uuid %}"
+                                               class="btn-sm btn" data-toggle="tooltip"
+                                               data-original-title='Modify Payment Status'>
+                                                <i class="fa fa-pencil-alt"></i></a></td>
+                                    {% else %}
+                                        <td><span style="color: red">Unpaid</span>
+                                            <a href="{% url 'dashboard:payment_status' appt.uuid %}" class="btn-sm btn"
+                                               data-toggle="tooltip"
+                                               data-original-title='Modify Payment Status'>
+                                                <i class="fa fa-pencil-alt"></i>
+                                            </a>
+                                        </td>
+
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                        {% include 'dashboard/base/pagination.html' %}
+                    {% else %}
+                        <h2>No appointments at the moment !</h2>
+                    {% endif %}
                 </div>
             </div>
         </div>
-        <div class="row ml-2 mr-2 mb-2 mt-2">
-            <div class="col-sm-12 document-table-space">
-            {% if appointments %}
-                <table class="table  w-full no-footer" role="grid">
-                    <thead class="table-space-top-bottom">
-                        <tr role="row">
-                            <th>S.N</th>
-                            <th>Full Name</th>
-                            <th>Phone</th>
-                            <th>On Date</th>
-                            <th>Service</th>
-                            <th>Paid</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for appt in appointments %}
-                        <tr>
-                            <td>{{ forloop.counter }}</td>
-                            <td>{{ appt.full_name }}</td>
-                            <td>{{ appt.phone }}</td>
-                            <td>{{ appt.on_date|date }}</td>
-                            <td>
-                                {{ appt.service }}
-                            </td>
-                        <td>{{ appt.is_paid }}</td>
-                        </tr>
-                        {% endfor %}
-
-                    </tbody>
-                </table>
-                {% include 'dashboard/base/pagination.html' %}
-                {% else %}
-                <h2>No appointments at the moment !</h2>
-            {% endif %}
-            </div>
-        </div>
     </div>
-</div>
 {% endblock %}

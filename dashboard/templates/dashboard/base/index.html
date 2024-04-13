@@ -152,8 +152,12 @@
                                 </a>
                                 <!-- breadcrumb -->
                                 <div class="nav-breadcrumb">
+                                {% if request.user.userprofile.is_admin %}
+                                    <b>{{ request.user.first_name}} {{ request.user.last_name}} (Admin)</b>
+                                    {% else %}
+                                    <b>{{ request.user.first_name}} {{ request.user.last_name}} (Caregiver)</b>
+                                {% endif %}
                                     <ol class="breadcrumb">
-                                        <li class="breadcrumb-item"><a href="{% url 'dashboard:index' %}">Home</a></li>
                                         {% block breadcrumb %}
                                         {% endblock %}
                                     </ol>

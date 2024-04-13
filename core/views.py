@@ -130,7 +130,9 @@ class TranxVerifyView(CreateAPIView):
         transaction.payment_medium = KHALTI
         if response.status_code == 200:
             transaction.status = VERIFIED
-            transaction.is_paid = True
+            appointment = transaction.appointment
+            appointment.is_paid = True
+            appointment.save()
             message = "Your payment has been confirmed !!"
         else:
             transaction.status = UNVERIFIED

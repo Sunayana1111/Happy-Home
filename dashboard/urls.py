@@ -6,6 +6,7 @@ app_name = 'dashboard'
 urlpatterns=[       
         path('', views.CareGiverAppointmentView.as_view(), name='index'),
         path('lab-appointments/', views.LabAppointmentView.as_view(), name='lab_appointments'),
+        path('appointment/<str:uuid>/payment-status/', views.UpdatePaymentStatus.as_view(), name="payment_status"),
 
         # git-pull
         path('git-pull', views.GitPullView.as_view(), name='git-pull'),

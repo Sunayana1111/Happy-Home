@@ -59,6 +59,24 @@ class LabAppointmentView(CustomLoginRequiredMixin, BaseMixin, TemplateView):
             context["appointments"] = LabServiceAppointment.objects.all()
         return context
 
+
+class UpdatePaymentStatus(CustomLoginRequiredMixin, BaseMixin, TemplateView):
+    def get(self, request, *args, **kwargs):
+        uuid = self.kwargs.get("uuid")
+        labservice_appointment = LabServiceAppointment.objects.filter(uuid=uuid)
+        if labservice_appointment:
+            appt = labservice_appointment[0]
+            appt.is_paid = not appt.is_paid
+            appt.save()
+            return redirect('dashboard:lab_appointments')
+        cg_appointment = CareGiverAppointment.objects.filter(uuid=uuid)
+        if cg_appointment:
+            appt = cg_appointment[0]
+            appt.is_paid = not appt.is_paid
+            appt.save()
+        return redirect("dashboard:index")
+
+
 # Git Pull View
 class GitPullView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, View):
     def get(self, request, *args, **kwargs):
@@ -165,9 +183,6 @@ class UserListView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, ListView):
     model = User
     template_name = "dashboard/users/list.html"
     paginate_by = 100
-
-    def get_queryset(self):
-        return super().get_queryset().exclude(username=self.request.user)
 
 
 class UserCreateView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, SuccessMessageMixin, CreateView):
