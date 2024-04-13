@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView
+from account.models import UserProfile
 
 from .forms import (
     ChangePasswordForm,
@@ -54,7 +55,8 @@ class GitPullView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, View):
 # Registration
 class SignupView(BaseMixin, NonLoginRequiredMixin, CreateView):
     form_class = SignUpForm
-    success_url = reverse_lazy('dashboard:index')
+    success_url = reverse_lazy('dashboard:login')
+    success_message = "User account has been registered !!"
     template_name = 'dashboard/auth/signup.html'
 
     def form_valid(self, form):
@@ -63,18 +65,23 @@ class SignupView(BaseMixin, NonLoginRequiredMixin, CreateView):
             username=form.cleaned_data.get('username'),
             first_name=form.cleaned_data.get('first_name'),
             last_name=form.cleaned_data.get('last_name'),
-            email=form.cleaned_data.get('username')
+            email=form.cleaned_data.get('email')
         )
         user.set_password(form.cleaned_data.get('password'))
+        user.is_active = False
         user.save()
-
-        # logging in user after registration
-        login(self.request, user)
+        if form.cleaned_data.get("registration") == "Admin":
+            is_admin, is_caregiver = True, False
+        else:
+            is_caregiver, is_admin = True, False
+        UserProfile.objects.create(user=user, age=form.cleaned_data.get("age"),
+                                   phone=form.cleaned_data.get("phone"),
+                                   address=form.cleaned_data.get("address"),
+                                   gender=form.cleaned_data.get("gender"),
+                                   is_admin=is_admin, is_caregiver=is_caregiver)
         return redirect(self.success_url)
 
     def form_invalid(self, form):
-        if self.request.is_ajax():
-            return JsonResponse({'errors': form.errors}, status=400)
         return super().form_invalid(form)
 
 
@@ -87,6 +94,13 @@ class LoginPageView(NonLoginRequiredMixin, FormView):
         username = form.cleaned_data.get('username')
         password = form.cleaned_data.get('password')
         user = authenticate(username=username, password=password)
+        try:
+            if not user.userprofile.is_admin and not user.userprofile.is_caregiver:
+                print("Returned")
+                return redirect("dashboard:login")
+        except:
+            print("Returneddddddd")
+            return redirect("dashboard:login")
 
         # Remember me
         if self.request.POST.get('remember', None) == None:

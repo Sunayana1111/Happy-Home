@@ -16,6 +16,18 @@ class SignUpForm(forms.ModelForm):
         'required': 'true',
         'placeholder': 'Retype Password *'}))
 
+    gender_choices = (("MALE", "Male"), ("FEMALE", "Female"), ("OTHER", "Other"))
+    gender = forms.ChoiceField(choices=gender_choices)
+
+    age = forms.IntegerField()
+    address = forms.CharField(max_length=50)
+    phone = forms.CharField(max_length=14)
+    registration_choices = (
+        ("Admin", "Admin"),
+        ("Caregiver", "Caregiver")
+    )
+    registration = forms.ChoiceField(choices=registration_choices)
+
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password', 'confirm_password')
