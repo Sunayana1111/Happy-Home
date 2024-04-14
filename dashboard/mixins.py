@@ -47,9 +47,13 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
     login_url = reverse_lazy('dashboard:login')
 
     def dispatch(self, request, *args, **kwargs):
-        if self.request.user.userprofile.is_admin or self.request.user.userprofile.is_caregiver:
-            return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+        if self.request.user.is_authenticated:
+            try:
+                if self.request.user.userprofile.is_admin or self.request.user.userprofile.is_caregiver:
+                    return super().dispatch(request, *args, **kwargs)
+            except:
+                pass
+        return redirect("dashboard:login")
 
 
 class BaseMixin():

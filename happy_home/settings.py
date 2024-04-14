@@ -156,3 +156,14 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'happyhomedb',
+#         'USER': 'mysql',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',  # Or your MySQL server IP address
+#         'PORT': '3306',  # MySQL default port
+#     }
+# }

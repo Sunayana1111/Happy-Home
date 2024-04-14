@@ -16,7 +16,7 @@ if settings.DEBUG:
 
     urlpatterns += [
         path('api/root/', SwaggerSchemaView.as_view()),
-        path('', RedirectView.as_view(url='/api/root/', permanent=False)),
+        path('', RedirectView.as_view(url='/dashboard/', permanent=False)),
         path('api-auth/', include('rest_framework.urls',
                               namespace='rest_framework')),
     ]
