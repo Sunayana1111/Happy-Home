@@ -20,6 +20,10 @@
                     {% else %}
                         <img src="{% static 'dashboard/admin/assets/avators/placeholder.webp' %}"
                              style="height: 400px; width: 500px">
+                        <br><br>
+                        {% if caregiver %}
+                            <h5><b>Ratings</b>&nbsp;{{ caregiver.ratings }} / 5</h5>
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div class="col-md-6 card-form__body card-body pomelo-form-caard" style="background:none !important;">

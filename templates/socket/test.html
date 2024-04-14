@@ -23,11 +23,12 @@
         if (token) {
             document.getElementById('messageDiv').style.display='';
             console.log(window.location.host)
-            const endpoint = `ws://${window.location.host}/ws/chat/?${token}`;
+            const endpoint = `wss://${window.location.host}/ws/chat/?${token}`;
             const chatSocket = new WebSocket(endpoint);
 
             chatSocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
+                console.log(data)
                 document.querySelector('#chat-log').value += (data.text + '\n');
             };
 
@@ -48,7 +49,8 @@
                 console.log(message);
                 chatSocket.send(JSON.stringify({
                     'text': message,
-                    'thread': window.location.pathname.split('/')[3]
+                    'room_uuid': "7e5dc657e9484c60b2ce329c83b5b778",
+                    "user": "cg6"
                 }));
                 messageInputDom.value = '';
             };

@@ -1,10 +1,15 @@
 from django.db.models import Q
+from django.contrib.auth.models import User
 from rest_framework.generics import CreateAPIView, ListAPIView
 from rest_framework import status
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter
+
+from account.serializers.user import UserSerializer
+from core.models import CareGiver
 from .serializers import RoomCheckSerializer, FirstMessageSerializer, RoomMessageSerializer, \
-    RoomMessageListSerializer
+    RoomMessageListSerializer, UserChatRoomSerializer
 from .models import ChatRoom, ChatMessage
 
 
@@ -81,7 +86,7 @@ class RoomMessageListView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         room = self.get_object()
-        messages = ChatMessage.objects.filter(room=room)
+        messages = ChatMessage.objects.filter(room=room).order_by("created_at")
         queryset = self.filter_queryset(messages)
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -90,3 +95,20 @@ class RoomMessageListView(ListAPIView):
 
         serializer = self.get_serializer(queryset, many=True, context={"request": request})
         return Response(serializer.data)
+
+
+class UserChatRooms(ListAPIView):
+    serializer_class = UserChatRoomSerializer
+
+    def get_queryset(self):
+        return ChatRoom.objects.filter(participants__icontains=self.request.user.id).order_by('-created_at')
+
+
+class UserView(ListAPIView):
+    serializer_class = UserSerializer
+    filter_backends = [SearchFilter, ]
+    search_fields = ["email", "username", "first_name", "last_name"]
+
+    def get_queryset(self):
+        user_ids = CareGiver.objects.all().values_list("user", flat=True)
+        return User.objects.filter(id__in=user_ids).distinct().order_by("-date_joined")
