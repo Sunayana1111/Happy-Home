@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='SocketAuthToken',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('token', models.TextField(unique=True)),
+                # ('token', models.TextField(unique=True, max_length=50)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='user_socket_token', to=settings.AUTH_USER_MODEL)),
             ],
         ),

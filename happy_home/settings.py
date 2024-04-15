@@ -62,12 +62,12 @@ TEMPLATES = [
 # WSGI_APPLICATION = 'happy_home.wsgi.application'
 ASGI_APPLICATION = 'happy_home.asgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# # DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -157,13 +157,13 @@ CHANNEL_LAYERS = {
     },
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'happyhomedb',
-#         'USER': 'mysql',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',  # Or your MySQL server IP address
-#         'PORT': '3306',  # MySQL default port
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'happyhomedb',
+        'USER': 'mysql',
+        'PASSWORD': 'system',
+        'HOST': 'localhost',  # Or your MySQL server IP address
+        'PORT': '3306',  # MySQL default port
+    }
+}
