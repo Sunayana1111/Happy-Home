@@ -9,7 +9,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
 INSTALLED_APPS = [
     'daphne',
     'django.contrib.admin',
@@ -46,7 +45,7 @@ ROOT_URLCONF = 'happy_home.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR/'templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,7 +83,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -92,7 +90,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 STATIC_URL = 'static/'
 MEDIA_URL = 'media/'
@@ -109,10 +106,14 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated"
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        # "rest_framework.renderers.BrowsableAPIRenderer"# Use JSONRenderer as the default
+        # Add other renderer classes if needed
+    ],
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10
 }
-
 
 LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
@@ -124,10 +125,9 @@ KHALTI_PUBLIC_KEY = khalti_public_key
 KHALTI_SECRET_KEY = khalti_secret_key
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://f859-2400-1a00-b030-1c0-44d8-9f4a-261-3d26.ngrok-free.app',  # Add your trusted host here
+    'https://8673-2400-1a00-b030-162d-35da-2b4c-ae3b-b0ff.ngrok-free.app/',  # Add your trusted host here
     'https://subdomain.example.com',  # Add additional trusted hosts if needed
 ]
-
 
 # DEFAULT_FROM_EMAIL = 'Happy Home <noreply@munanyc.com>'
 TO_EMAIL = 'sunayanashrestha3@gmail.com'
@@ -146,7 +146,6 @@ EMAIL_HOST_USER = 'AKIA3J3FUXCJIBP6OQUR'
 EMAIL_HOST_PASSWORD = 'BIG/JGOJ9+nRWCLqN8/x2e8V/KNBYAgNKaimCxhToL1C'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
 
 CHANNEL_LAYERS = {
     'default': {
@@ -167,3 +166,9 @@ CHANNEL_LAYERS = {
 #         'PORT': '3306',  # MySQL default port
 #     }
 # }
+
+from corsheaders.defaults import default_headers
+
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'ngrok-skip-browser-warning'
+]

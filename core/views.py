@@ -35,7 +35,7 @@ class CareGiverView(ListAPIView):
             return self.get_paginated_response(serializer.data)
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, content_type="application/json")
+        return Response(serializer.data)
 
 
 class CareGiverDetailView(RetrieveAPIView):
