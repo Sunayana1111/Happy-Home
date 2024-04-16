@@ -180,7 +180,7 @@ class ChangePasswordView(CustomLoginRequiredMixin, SuccessMessageMixin, FormView
 
 
 # User CRUD
-class UserListView(CustomLoginRequiredMixin, SuperAdminRequiredMixin, ListView):
+class UserListView(CustomLoginRequiredMixin, ListView):
     model = User
     template_name = "dashboard/users/list.html"
     paginate_by = 100
