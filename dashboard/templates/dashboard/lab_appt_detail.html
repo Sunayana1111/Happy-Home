@@ -1,0 +1,54 @@
+{% extends 'dashboard/base/index.html' %}
+
+{% block title %} Lab Appointments {% endblock %}
+
+{% block subtitle %} Lab Appointments {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <div id="map" style="height: 400px;"></div>
+    <br><br>
+    <a href="{% url 'dashboard:lab_appointments' %}" class="btn btn-primary">Back</a><br><br>
+    <h2>Booking Details</h2>
+    <table class="table table-hover" style="width: 70%">
+        <tr>
+            <td><b>Name</b></td>
+            <td>{{ object.full_name }}</td>
+        </tr>
+        <tr>
+            <td><b>Address</b></td>
+            <td>{{ object.address }}</td>
+        </tr>
+        <tr>
+            <td><b>Phone Number</b></td>
+            <td>{{ object.phone }}</td>
+        </tr>
+        <tr>
+            <td><b>Date</b></td>
+            <td>{{ object.on_date | date }}</td>
+        </tr>
+        <tr>
+            <td><b>Service</b></td>
+            <td>{{ object.service.name }}</td>
+        </tr>
+        <tr>
+            <td><b>Payment</b></td>
+            <td>{% if object.is_paid %}Paid{% else %}Unpaid{% endif %}</td>
+        </tr>
+
+    </table>
+{% endblock %}
+
+{% block script %}
+    <script>
+        var map = L.map('map').setView([{{ lat }}, {{ long }}], 15); // Set initial center and zoom level
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        var m = L.marker([{{ lat }}, {{ long }}]).addTo(map);
+        m.bindPopup("{{ object.full_name }}'s Location").openPopup();
+    </script>
+{% endblock %}

@@ -31,6 +31,7 @@
                                     <th>Caregiver</th>
                                 {% endif %}
                                 <th>Payment Status</th>
+                                <th>Action</th>
                             </tr>
                             </thead>
 
@@ -63,6 +64,7 @@
                                             </a>
                                         </td>
                                     {% endif %}
+                                    <td><a href="{% url 'dashboard:cg_appt_detail' appt.id %}">Detail</a></td>
                                 </tr>
                             {% endfor %}
 

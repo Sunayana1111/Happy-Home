@@ -1,4 +1,5 @@
 import subprocess
+import requests
 
 from django.conf import settings as conf_settings
 from django.core.mail import send_mail
@@ -9,7 +10,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
-from django.views.generic import View, TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import View, TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView, DetailView
 from core.models import CareGiverAppointment, LabServiceAppointment, CareGiver
 from account.models import UserProfile
 
@@ -286,3 +287,49 @@ class CareGiverProfileView(CustomLoginRequiredMixin, CreateView):
             except:
                 pass
         return redirect("dashboard:caregiver_profile", self.request.user.id)
+
+
+class CGAppointmentDetailView(CustomLoginRequiredMixin, DetailView):
+    template_name = "dashboard/cg_appt_detail.html"
+
+    def get_queryset(self):
+        profile = self.request.user.userprofile
+        if profile.is_caregiver:
+            return CareGiverAppointment.objects.filter(caregiver__user=self.request.user)
+        else:
+            return CareGiverAppointment.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        appointment = self.get_object()
+        map_api = f"https://nominatim.openstreetmap.org/search.php?street={appointment.address}&format=jsonv2"
+        response = requests.get(map_api)
+        if response.status_code == 200:
+            response = response.json()
+            lat, long = response[0]["lat"], response[0]["lon"]
+        else:
+            lat, long = "27.6758169", "85.3384848"
+        context["lat"] = lat
+        context["long"] = long
+        return context
+
+
+class LabAppointmentDetailView(CustomLoginRequiredMixin, DetailView):
+    template_name = "dashboard/lab_appt_detail.html"
+
+    def get_queryset(self):
+        return LabServiceAppointment.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        appointment = self.get_object()
+        map_api = f"https://nominatim.openstreetmap.org/search.php?street={appointment.address}&format=jsonv2"
+        response = requests.get(map_api)
+        if response.status_code == 200:
+            response = response.json()
+            lat, long = response[0]["lat"], response[0]["lon"]
+        else:
+            lat, long = "27.6758169", "85.3384848"
+        context["lat"] = lat
+        context["long"] = long
+        return context
