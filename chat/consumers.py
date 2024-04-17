@@ -42,22 +42,29 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data=None, bytes_data=None):
         print(self.user)
         data = json.loads(text_data)
+        print(data)
         room_uuid = data.get("room_uuid")
-        receiver_un = data.get("user")
         text = data.get("text")
         sender = self.user
-        receiver = User.objects.get(username=receiver_un)
-        users = [sender.id, receiver.id]
         if room_uuid:
-            room = ChatRoom.objects.filter(Q(participants__icontains=users) |
-                                           Q(participants__icontains=reversed(users)), uuid=room_uuid)
+            room = ChatRoom.objects.filter(uuid=room_uuid)
             if room:
                 room = room[0]
                 ChatMessage.objects.create(room=room, user=sender, text=text)
+                users_qs = User.objects.filter(id__in=room.participants)
+                receiver = users_qs.exclude(id__in=[sender.id])[0]
             else:
                 self.send(text_data=json.dumps({"message": "Invalid chat room"}))
                 return
         else:
+            receiver_un = data.get("user")
+            try:
+                receiver = User.objects.get(username=receiver_un)
+            except:
+                self.send(text_data=json.dumps({"message": "Invalid username"}))
+                return
+            users = [sender.id, receiver.id]
+            users_qs = User.objects.filter(id__in=users)
             room = ChatRoom.objects.filter(Q(participants__icontains=users) |
                                            Q(participants__icontains=reversed(users)))
             if room:
@@ -66,13 +73,16 @@ class ChatConsumer(WebsocketConsumer):
             else:
                 room = ChatRoom.objects.create(participants=users)
                 ChatMessage.objects.create(room=room, user=sender, text=text)
-        for user in [sender, receiver]:
-            async_to_sync(self.channel_layer.group_send)(user.username,
-                                                         {"room_uuid": room.uuid.hex, "text": text,
-                                                          "type": "chat_text"})
+        for user in users_qs:
+            data = {"room_uuid": room.uuid.hex, "text": text, "type": "chat_text",
+                    "sender": sender.username, "receiver": receiver.username}
+            print(data)
+            async_to_sync(self.channel_layer.group_send)(user.username, data)
 
     def chat_text(self, event):
         print("Here")
         room_uuid = event.get("room_uuid")
         text = event.get("text")
-        self.send(text_data=json.dumps({"room_uuid": room_uuid, "text": text}))
+        self_message = event["sender"] == self.user.username
+        print({"room_uuid": room_uuid, "text": text, "self_message": self_message})
+        self.send(text_data=json.dumps({"room_uuid": room_uuid, "text": text, "self_message": self_message}))

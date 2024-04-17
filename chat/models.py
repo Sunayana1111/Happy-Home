@@ -10,7 +10,7 @@ User = get_user_model()
 
 class SocketAuthToken(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_socket_token')
-    token = models.TextField(unique=True)
+    token = models.TextField(unique=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.token:

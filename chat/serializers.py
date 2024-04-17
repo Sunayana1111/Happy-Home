@@ -38,10 +38,15 @@ class UserChatRoomSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     image = serializers.SerializerMethodField()
     last_message = serializers.SerializerMethodField()
+    uuid = serializers.SerializerMethodField()
+    # username =
 
     class Meta:
         model = ChatRoom
         fields = ["uuid", "name", "image", "last_message"]
+
+    def get_uuid(self, room):
+        return room.uuid.hex
 
     def get_name(self, room):
         request = self.context.get("request")

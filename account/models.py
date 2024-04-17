@@ -21,3 +21,12 @@ class UserProfile(BaseModel):
 
     def __str__(self) -> str:
         return f"Profile of {self.user.username}"
+
+
+class OTP(BaseModel):
+    digits = models.CharField(max_length=6)
+    email = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.digits
+

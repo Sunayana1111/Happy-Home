@@ -129,7 +129,7 @@ KHALTI_PUBLIC_KEY = khalti_public_key
 KHALTI_SECRET_KEY = khalti_secret_key
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://8673-2400-1a00-b030-162d-35da-2b4c-ae3b-b0ff.ngrok-free.app/',  # Add your trusted host here
+    'https://8673-2400-1a00-b030-162d-35da-2b4c-ae3b-b0ff.ngrok-free.app',  # Add your trusted host here
     'https://subdomain.example.com',  # Add additional trusted hosts if needed
 ]
 
