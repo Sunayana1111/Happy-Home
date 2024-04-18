@@ -279,13 +279,19 @@ class CareGiverProfileView(CustomLoginRequiredMixin, CreateView):
                                                                  experience=experience,
                                                                  bio=bio))
         pp = form.cleaned_data.get("profile_picture")
-        if pp:
-            try:
-                profile = self.request.user.userprofile
-                profile.profile_picture = pp
-                profile.save()
-            except:
-                pass
+        certificate = form.cleaned_data.get("certificate")
+        if not certificate:
+            certificate = None
+        if not pp:
+            pp = None
+        try:
+            profile = self.request.user.userprofile
+            profile.profile_picture = pp
+            profile.save()
+        except:
+            pass
+        cg.certificate = certificate
+        cg.save()
         return redirect("dashboard:caregiver_profile", self.request.user.id)
 
 
@@ -333,3 +339,10 @@ class LabAppointmentDetailView(CustomLoginRequiredMixin, DetailView):
         context["lat"] = lat
         context["long"] = long
         return context
+
+
+class UserDetailView(CustomLoginRequiredMixin, DetailView):
+    template_name = "dashboard/users/user_detail.html"
+
+    def get_queryset(self):
+        return User.objects.all()

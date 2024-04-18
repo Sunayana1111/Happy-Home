@@ -1,0 +1,64 @@
+{% extends "dashboard/base/index.html" %}
+
+{% load static %}
+
+{% block title %} Users {% endblock %}
+
+{% block subtitle %} Users {% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-4">
+            {% if object.userprofile.profile_picture %}
+                <img src="{{ object.userprofile.profile_oicture.url }}" style="height: 300px; width: 350px">
+                {% else %}
+                <img src="{% static 'dashboard/admin/assets/avators/placeholder.webp' %}" style="height: 300px; width: 350px">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+        <h2>User Detail</h2><br>
+            <table class="table">
+                <tr>
+                    <td><b>Name</b></td>
+                    <td>{{ object.get_full_name }}</td>
+                </tr>
+                <tr>
+                    <td><b>Email</b></td>
+                    <td>{{ object.email }}</td>
+                </tr>
+                <tr>
+                    <td><b>Address</b></td>
+                    <td>{{ object.userprofile.address }}</td>
+                </tr>
+                <tr>
+                    <td><b>Phone</b></td>
+                    <td>{{ object.userprofile.phone }}</td>
+                </tr>
+                {% if object.care_givers.all %}
+                    <tr>
+                        <td><b>Speciality</b></td>
+                        <td>{{ object.care_givers.all.0.speciality }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Languages</b></td>
+                        <td>{{ object.care_givers.all.0.languages }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Experience</b></td>
+                        <td>{{ object.care_givers.all.0.experience }}</td>
+                    </tr>
+                    <tr>
+                        <td><b>Certificate</b></td>
+                        <td>
+                            {% if object.care_givers.all.0.certificate %}
+                                <a target="_blank" href="{{ object.care_givers.all.0.certificate.url }}">View Certificate</a>
+                                {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

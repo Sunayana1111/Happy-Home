@@ -12,6 +12,7 @@ class CareGiver(BaseModel):
     ratings = models.FloatField(null=True, blank=True)
     experience = models.CharField(max_length=50)  # in years/month
     bio = models.TextField(null=True, blank=True)
+    certificate = models.FileField(null=True, blank=True)
 
     def __str__(self) -> str:
         return f"Caregiver {self.user.username}"

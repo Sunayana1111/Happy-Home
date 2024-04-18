@@ -57,6 +57,10 @@
                                         <i class="fas fa-check"></i>
                                         {% endif %}
                                     </a>
+                                        <a href="{% url 'dashboard:user_detail' users.id %}" style="margin-left: 5px" class="badge badge-secondary"
+                                           data-original-title='Detail' data-toggle="tooltip">
+                                            <i class="fa fa-eye"></i>
+                                        </a>
                                     {% endif %}
                                 </div>
                             </td>

@@ -24,9 +24,12 @@ class GetDeleteMixin:
 
 class SuperAdminRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
-        if self.request.user.is_superuser:
-            return super().dispatch(request, *args, **kwargs)
-        return self.handle_no_permission()
+        try:
+            if self.request.user.userprofile.is_admin:
+                return super().dispatch(request, *args, **kwargs)
+            return self.handle_no_permission()
+        except:
+            return self.handle_no_permission()
 
 
 class NonSuperAdminRequiredMixin:
@@ -51,9 +54,12 @@ class CustomLoginRequiredMixin(LoginRequiredMixin):
             try:
                 if self.request.user.userprofile.is_admin or self.request.user.userprofile.is_caregiver:
                     return super().dispatch(request, *args, **kwargs)
-            except:
-                pass
-        return redirect("dashboard:login")
+            except Exception as e:
+                print(e)
+                print("reached except")
+                return redirect("dashboard:login")
+        else:
+            return redirect("dashboard:login")
 
 
 class BaseMixin():

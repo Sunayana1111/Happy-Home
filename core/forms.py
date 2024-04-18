@@ -11,7 +11,7 @@ class CaregiverForm(forms.ModelForm):
         caregiver = CareGiver.objects.filter(user=user)
         if caregiver:
             caregiver = caregiver[0]
-            cg_fields = ["speciality", "languages", "experience", "bio"]
+            cg_fields = ["speciality", "languages", "experience", "bio", "certificate"]
             for field in cg_fields:
                 self.fields[field].initial = getattr(caregiver, field)
         try:
@@ -22,4 +22,4 @@ class CaregiverForm(forms.ModelForm):
 
     class Meta:
         model = CareGiver
-        fields = ['speciality', "languages", "experience", "bio"]
+        fields = ['speciality', "languages", "experience", "certificate", "bio"]
