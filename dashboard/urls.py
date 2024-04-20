@@ -37,4 +37,6 @@ urlpatterns = [
     path("caregiver/appointment/<int:pk>/", views.CGAppointmentDetailView.as_view(), name="cg_appt_detail"),
     path("lab/appointment/<int:pk>/", views.LabAppointmentDetailView.as_view(), name="lab_appt_detail"),
 
+    # chat
+    path("chat/", views.ChatView.as_view(), name="chat")
 ]

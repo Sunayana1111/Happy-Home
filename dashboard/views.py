@@ -346,3 +346,7 @@ class UserDetailView(CustomLoginRequiredMixin, DetailView):
 
     def get_queryset(self):
         return User.objects.all()
+
+
+class ChatView(CustomLoginRequiredMixin, TemplateView):
+    template_name = "dashboard/chat.html"
