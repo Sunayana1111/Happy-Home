@@ -11,6 +11,9 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.crypto import get_random_string
 from django.views.generic import View, TemplateView, FormView, ListView, CreateView, UpdateView, DeleteView, DetailView
+from rest_framework.authtoken.models import Token
+
+from commons.utils import get_api_url
 from core.models import CareGiverAppointment, LabServiceAppointment, CareGiver
 from account.models import UserProfile
 
@@ -350,3 +353,23 @@ class UserDetailView(CustomLoginRequiredMixin, DetailView):
 
 class ChatView(CustomLoginRequiredMixin, TemplateView):
     template_name = "dashboard/chat.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ChatView, self).get_context_data()
+        token = Token.objects.filter(user=self.request.user)
+        token = token[0].key
+        context["token"] = token
+        context["scheme"] = "wss" if self.request.scheme == "https" else "ws"
+        api_url = get_api_url(self.request)
+        headers = {"Authorization": f"Token {token}"}
+        response = requests.get(f"{api_url}/chat/user/rooms/", headers=headers)
+        if response.status_code == 200:
+            response = response.json()
+            context["chat_rooms"] = response
+            room_uuid = response[0]["uuid"]
+            message_response = requests.get(f"{api_url}/chat/room/{room_uuid}/get-message/", headers=headers)
+            print(message_response.json())
+            if message_response.status_code == 200:
+                context["messages"] = message_response.json()["results"]
+                context["room_uuid"] = room_uuid
+        return context

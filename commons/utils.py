@@ -1,4 +1,6 @@
 import random
+
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.conf import settings
@@ -21,3 +23,7 @@ def send_template_email(user, subject='', template_name='', context=None):
                          body=message, to=[settings.TO_EMAIL, user.email, "naween321@gmail.com"])
     email.content_subtype = "html"
     email.send()
+
+
+def get_api_url(request):
+    return f"{request.scheme}://{get_current_site(request).domain}/api"
