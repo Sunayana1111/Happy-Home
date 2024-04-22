@@ -13,7 +13,7 @@ router.register('user', UserViewSet, basename='user')
 
 urlpatterns = [
     path('login/', LoginView.as_view(), name="user_login"),
-    path('register/', UserRegisterView.as_view()),
+    path('register/', UserRegisterView.as_view(), name="user_register"),
     path("forget-password/generate/otp/", OTPView.as_view()),
     path("forget-password/reset/", PasswordResetView.as_view()),
 ] + router.urls
