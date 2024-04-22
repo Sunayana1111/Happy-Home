@@ -86,7 +86,7 @@ class RoomMessageListView(ListAPIView):
 
     def list(self, request, *args, **kwargs):
         room = self.get_object()
-        messages = ChatMessage.objects.filter(room=room).order_by("created_at")
+        messages = ChatMessage.objects.filter(room=room).order_by("-created_at")
         queryset = self.filter_queryset(messages)
         page = self.paginate_queryset(queryset)
         if page is not None:

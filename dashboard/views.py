@@ -370,6 +370,7 @@ class ChatView(CustomLoginRequiredMixin, TemplateView):
             message_response = requests.get(f"{api_url}/chat/room/{room_uuid}/get-message/", headers=headers)
             print(message_response.json())
             if message_response.status_code == 200:
-                context["messages"] = message_response.json()["results"]
+                message = list(message_response.json()["results"])
+                context["messages"] = reversed(message)
                 context["room_uuid"] = room_uuid
         return context
