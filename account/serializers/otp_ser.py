@@ -7,6 +7,7 @@ from account.models import OTP
 
 
 class OTPSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField()
     class Meta:
         model = OTP
         fields = ["email"]

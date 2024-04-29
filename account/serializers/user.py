@@ -1,7 +1,19 @@
+import re
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from account.models import UserProfile
+
+
+def password_validator(value):
+    if not bool(re.findall('[0-9]+', value)):
+        raise serializers.ValidationError("Password must contain at least 1 digit")
+    if not bool(re.findall('[A-Z]+', value)) and not bool(re.findall('[a-z]+', value)):
+        raise serializers.ValidationError("Password must contain at least 1 alphabet")
+    if not value:
+        raise serializers.ValidationError("Password cannot be empty")
+    if len(value) < 8:
+        raise serializers.ValidationError("Password should be at least 8 characters")
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -29,6 +41,15 @@ class UserSerializer(serializers.ModelSerializer):
             if attrs["password"] != attrs["password2"]:
                 raise serializers.ValidationError("Passwords didn't match")
         return attrs
+
+    def validate_email(self, email):
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("Email already exists !")
+        return email
+
+    def validate_password(self, password):
+        password_validator(password)
+        return password
     
     def get_fields(self):
         fields = super().get_fields()
